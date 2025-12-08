@@ -31,5 +31,4 @@ go.work.sum
 # .idea/
 # .vscode/
 
-main.go
 Project_Data.csv
