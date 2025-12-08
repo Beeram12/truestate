@@ -113,11 +113,7 @@ func (s *SQLiteDB) SeeData(filePath string) error {
 	return s.DB.CreateInBatches(transactions, 100).Error
 }
 
-func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedResponse, error) {
-	var transactions []model.Transaction
-
-	var total int64
-
+func (s *SQLiteDB) buildFilterQuery(p model.FilterParams) *gorm.DB {
 	query := s.DB.Model(&model.Transaction{})
 
 	// Search filter also case insensitive
@@ -166,6 +162,15 @@ func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedRespon
 		query = query.Where("date BETWEEN ? AND ?", p.StartDate, p.EndDate)
 	}
 
+	return query
+}
+
+func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedResponse, error) {
+
+	var transactions []model.Transaction
+	var total int64
+
+	query := s.buildFilterQuery(p)
 	// Total count
 	query.Count(&total)
 
@@ -178,11 +183,11 @@ func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedRespon
 
 		switch p.SortBy {
 		case "date":
-			query = query.Order("date" + sortOrder)
+			query = query.Order("date " + sortOrder)
 		case "quantity":
-			query = query.Order("quantity" + sortOrder)
+			query = query.Order("quantity " + sortOrder)
 		case "customer_name":
-			query = query.Order("customer_name" + sortOrder)
+			query = query.Order("customer_name " + sortOrder)
 		default:
 			query = query.Order("date DESC")
 		}
@@ -215,5 +220,91 @@ func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedRespon
 		Limit:      p.Limit,
 		TotalPages: totalPages,
 		Data:       transactions,
+	}, nil
+}
+
+func (s *SQLiteDB) GetSummaryStats(p model.FilterParams) (*model.SummaryStats, error) {
+
+	type Result struct {
+		TotalUnits    int     `gorm:"column:total_units"`
+		TotalAmount   float64 `gorm:"column:total_amount"`
+		TotalDiscount float64 `gorm:"column:total_discount"`
+		TotalCount    int     `gorm:"column:total_count"`
+	}
+
+	var result Result
+
+	query := s.buildFilterQuery(p)
+
+	err := query.Select(`
+		COALESCE(SUM(sales_quantity), 0) as total_units, 
+		COALESCE(SUM(sales_total), 0) as total_amount, 
+		COALESCE(SUM(sales_total - sales_final), 0) as total_discount, 
+		COUNT(*) as total_count`).
+		Scan(&result).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.SummaryStats{
+		TotalUnitsSold:    result.TotalUnits,
+		TotalAmount:       result.TotalAmount,
+		TotalDiscount:     result.TotalDiscount,
+		TotalTransactions: result.TotalCount,
+	}, nil
+}
+
+func (s *SQLiteDB) GetFilterOptions() (*model.FilterOptions, error) {
+	var regions []string
+	var genders []string
+	var categories []string
+	var tags []string
+	var paymentMethods []string
+
+	s.DB.Model(&model.Transaction{}).
+		Distinct("gender").
+		Pluck("gender", &genders)
+
+	s.DB.Model(&model.Transaction{}).
+		Distinct("region").
+		Pluck("region", &regions)
+
+	s.DB.Model(&model.Transaction{}).
+		Distinct("category").
+		Pluck("category", &categories)
+
+	s.DB.Model(&model.Transaction{}).
+		Distinct("payment_method").
+		Pluck("payment_method", &paymentMethods)
+
+	var allTags []string
+	s.DB.Model(&model.Transaction{}).
+		Distinct("tags").
+		Pluck("tags", &allTags)
+
+	tagMap := make(map[string]bool)
+	for _, tagString := range allTags {
+		if tagString != "" {
+			tagList := strings.Split(tagString, ",")
+			for _, tag := range tagList {
+				tag = strings.TrimSpace(tag)
+				if tag != "" {
+					tagMap[tag] = true
+				}
+			}
+		}
+	}
+
+	for tag := range tagMap {
+		tags = append(tags, tag)
+	}
+
+	return &model.FilterOptions{
+		Regions:        regions,
+		Genders:        genders,
+		Categories:     categories,
+		Tags:           tags,
+		PaymentMethods: paymentMethods,
 	}, nil
 }
