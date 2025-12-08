@@ -9,8 +9,3 @@ type Customer struct {
 	Region string `json:"region"`
 	Type   string `json:"customer_type"`
 }
-
-
-
-
-
