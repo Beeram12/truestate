@@ -36,7 +36,7 @@ func NewSalesController(service services.TransactionService) *SalesController {
 	}
 }
 
-func (sc *SalesController) GetTransaction(c *gin.Context) {
+func (sc *SalesController) GetTransactions(c *gin.Context) {
 
 	// Default parameters
 	params := model.FilterParams{
@@ -44,18 +44,7 @@ func (sc *SalesController) GetTransaction(c *gin.Context) {
 		Limit: 10,
 	}
 
-	/params := model.FilterParams{}
-
-	if search := c.Query("search"); search != "" {
-		params.Search = search
-	}
-	
-	params.Region = c.QueryArray("customerRegion")
-	params.Gender = c.QueryArray("gender")
-	params.Category = c.QueryArray("productCategory")
-	params.Tag = c.QueryArray("tags")
-	params.PaymentMethod = c.QueryArray("paymentMethod")
-/ Pagination parameters
+	// Pagination parameters
 	search := c.Query("search")
 	if search != "" {
 		params.Search = search
@@ -212,10 +201,10 @@ func (sc *SalesController) GetFilterOptions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"regions":        options.Regions,
-		"genders":        options.Genders,
-		"categories":     options.Categories,
-		"tags":           options.Tags,
+		"regions":         options.Regions,
+		"genders":         options.Genders,
+		"categories":      options.Categories,
+		"tags":            options.Tags,
 		"payment_methods": options.PaymentMethods,
 	})
 }
