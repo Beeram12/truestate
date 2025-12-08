@@ -78,7 +78,7 @@ func (sc *SalesController) GetTransactions(c *gin.Context) {
 	// multi-select filters
 	params.Region = c.QueryArray("region")
 	params.Gender = c.Query("gender")
-	params.Category = c.QueryArray("catergory")
+	params.Category = c.QueryArray("category")
 	params.Tag = c.QueryArray("tag")
 	params.PaymentMethod = c.QueryArray("payment_method")
 
@@ -161,7 +161,7 @@ func (sc *SalesController) GetSummaryStats(c *gin.Context) {
 
 	params.Region = c.QueryArray("region")
 	params.Gender = c.Query("gender")
-	params.Category = c.QueryArray("catergory")
+	params.Category = c.QueryArray("category")
 	params.Tag = c.QueryArray("tag")
 	params.PaymentMethod = c.QueryArray("payment_method")
 

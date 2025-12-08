@@ -17,7 +17,6 @@ type SQLiteDB struct {
 	DB *gorm.DB
 }
 
-var _TransactionService = &SQLiteDB{}
 
 func NewDbInstance() *SQLiteDB {
 	return &SQLiteDB{}
@@ -119,42 +118,42 @@ func (s *SQLiteDB) buildFilterQuery(p model.FilterParams) *gorm.DB {
 	// Search filter also case insensitive
 	if p.Search != "" {
 		search := "%" + strings.ToLower(p.Search) + "%"
-		query = query.Where("LOWER(customer_name) LIKE ? OR phone LIKE ?", search, search)
+		query = query.Where("LOWER(customer_name) LIKE ? OR customer_phone LIKE ?", search, search)
 	}
 
 	// Region Filters
 	if len(p.Region) > 0 {
-		query = query.Where("region IN ?", p.Region)
+		query = query.Where("customer_region IN ?", p.Region)
 	}
 
 	// Gender Filter
 	if p.Gender != "" {
-		query = query.Where("gender = ?", p.Gender)
+		query = query.Where("customer_gender = ?", p.Gender)
 	}
 
-	// Cateogory filter
+	// Category filter
 	if len(p.Category) > 0 {
-		query = query.Where("category IN ?", p.Category)
+		query = query.Where("product_category IN ?", p.Category)
 	}
 
 	// Age Range filter
 	if p.MinAge > 0 {
-		query = query.Where("age >= ?", p.MinAge)
+		query = query.Where("customer_age >= ?", p.MinAge)
 	}
 	if p.MaxAge > 0 {
-		query = query.Where("age <= ?", p.MaxAge)
+		query = query.Where("customer_age <= ?", p.MaxAge)
 	}
 
 	// Tags filter
 	if len(p.Tag) > 0 {
 		for _, tag := range p.Tag {
-			query = query.Where("tags LIKE ?", "%"+tag+"%")
+			query = query.Where("product_tags LIKE ?", "%"+tag+"%")
 		}
 	}
 
 	// Payment filter
 	if len(p.PaymentMethod) > 0 {
-		query = query.Where("payment_method IN ?", p.PaymentMethod)
+		query = query.Where("logistics_payment_method IN ?", p.PaymentMethod)
 	}
 
 	// Date range filter
@@ -185,7 +184,7 @@ func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedRespon
 		case "date":
 			query = query.Order("date " + sortOrder)
 		case "quantity":
-			query = query.Order("quantity " + sortOrder)
+			query = query.Order("sales_quantity " + sortOrder)
 		case "customer_name":
 			query = query.Order("customer_name " + sortOrder)
 		default:
@@ -263,25 +262,25 @@ func (s *SQLiteDB) GetFilterOptions() (*model.FilterOptions, error) {
 	var paymentMethods []string
 
 	s.DB.Model(&model.Transaction{}).
-		Distinct("gender").
-		Pluck("gender", &genders)
+		Distinct("customer_gender").
+		Pluck("customer_gender", &genders)
 
 	s.DB.Model(&model.Transaction{}).
-		Distinct("region").
-		Pluck("region", &regions)
+		Distinct("customer_region").
+		Pluck("customer_region", &regions)
 
 	s.DB.Model(&model.Transaction{}).
-		Distinct("category").
-		Pluck("category", &categories)
+		Distinct("product_category").
+		Pluck("product_category", &categories)
 
 	s.DB.Model(&model.Transaction{}).
-		Distinct("payment_method").
-		Pluck("payment_method", &paymentMethods)
+		Distinct("logistics_payment_method").
+		Pluck("logistics_payment_method", &paymentMethods)
 
 	var allTags []string
 	s.DB.Model(&model.Transaction{}).
-		Distinct("tags").
-		Pluck("tags", &allTags)
+		Distinct("product_tags").
+		Pluck("product_tags", &allTags)
 
 	tagMap := make(map[string]bool)
 	for _, tagString := range allTags {

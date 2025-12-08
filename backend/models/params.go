@@ -20,7 +20,7 @@ type FilterParams struct {
 type SummaryStats struct {
 	TotalUnitsSold    int     `json:"total_units_sold"`
 	TotalAmount       float64 `json:"total_amount"`
-	TotalDiscount     float64 `json:"tota_discount"`
+	TotalDiscount     float64 `json:"total_discount"`
 	TotalTransactions int     `json:"total_transactions"`
 }
 

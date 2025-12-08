@@ -4,7 +4,7 @@ import models "github.com/Beeram12/truestate/backend/models"
 
 type TransactionService interface {
 	// Initialize and sets up the database
-	Initialize() error
+	DatabaseInit() error
 
 	// import the data present in CSV into database
 	SeeData(filePath string) error
