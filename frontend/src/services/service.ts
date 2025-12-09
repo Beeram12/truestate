@@ -47,42 +47,42 @@ export const salesApi = {
         if (params.filters) {
             if (params.filters.customerRegion?.length) {
                 params.filters.customerRegion.forEach(region => {
-                    queryParams.append('customerRegion', region);
+                    queryParams.append('region', region);
                 });
             }
 
-            if (params.filters.gender?.length) {
-                params.filters.gender.forEach(g => {
-                    queryParams.append('gender', g);
+            if (params.filters.gender && params.filters.gender.length > 0) {
+                params.filters.gender.forEach(genderValue => {
+                    queryParams.append('gender', genderValue);
                 });
             }
 
             if (params.filters.ageRange) {
-                queryParams.append('ageMin', params.filters.ageRange.min.toString());
-                queryParams.append('ageMax', params.filters.ageRange.max.toString());
+                queryParams.append('min_age', params.filters.ageRange.min.toString());
+                queryParams.append('max_age', params.filters.ageRange.max.toString());
             }
 
             if (params.filters.productCategory?.length) {
                 params.filters.productCategory.forEach(cat => {
-                    queryParams.append('productCategory', cat);
+                    queryParams.append('category', cat);
                 });
             }
 
             if (params.filters.tags?.length) {
                 params.filters.tags.forEach(tag => {
-                    queryParams.append('tags', tag);
+                    queryParams.append('tag', tag);
                 });
             }
 
             if (params.filters.paymentMethod?.length) {
                 params.filters.paymentMethod.forEach(method => {
-                    queryParams.append('paymentMethod', method);
+                    queryParams.append('payment_method', method);
                 });
             }
 
             if (params.filters.dateRange) {
-                queryParams.append('dateStart', params.filters.dateRange.start);
-                queryParams.append('dateEnd', params.filters.dateRange.end);
+                queryParams.append('start_date', params.filters.dateRange.start);
+                queryParams.append('end_date', params.filters.dateRange.end);
             }
         }
 
@@ -100,42 +100,42 @@ export const salesApi = {
         if (params.filters) {
             if (params.filters.customerRegion?.length) {
                 params.filters.customerRegion.forEach(region => {
-                    queryParams.append('customerRegion', region);
+                    queryParams.append('region', region);
                 });
             }
 
-            if (params.filters.gender?.length) {
-                params.filters.gender.forEach(g => {
-                    queryParams.append('gender', g);
+            if (params.filters.gender && params.filters.gender.length > 0) {
+                params.filters.gender.forEach(genderValue => {
+                    queryParams.append('gender', genderValue);
                 });
             }
 
             if (params.filters.ageRange) {
-                queryParams.append('ageMin', params.filters.ageRange.min.toString());
-                queryParams.append('ageMax', params.filters.ageRange.max.toString());
+                queryParams.append('min_age', params.filters.ageRange.min.toString());
+                queryParams.append('max_age', params.filters.ageRange.max.toString());
             }
 
             if (params.filters.productCategory?.length) {
                 params.filters.productCategory.forEach(cat => {
-                    queryParams.append('productCategory', cat);
+                    queryParams.append('category', cat);
                 });
             }
 
             if (params.filters.tags?.length) {
                 params.filters.tags.forEach(tag => {
-                    queryParams.append('tags', tag);
+                    queryParams.append('tag', tag);
                 });
             }
 
             if (params.filters.paymentMethod?.length) {
                 params.filters.paymentMethod.forEach(method => {
-                    queryParams.append('paymentMethod', method);
+                    queryParams.append('payment_method', method);
                 });
             }
 
             if (params.filters.dateRange) {
-                queryParams.append('dateStart', params.filters.dateRange.start);
-                queryParams.append('dateEnd', params.filters.dateRange.end);
+                queryParams.append('start_date', params.filters.dateRange.start);
+                queryParams.append('end_date', params.filters.dateRange.end);
             }
         }
 
