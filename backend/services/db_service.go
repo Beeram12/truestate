@@ -127,8 +127,8 @@ func (s *SQLiteDB) buildFilterQuery(p model.FilterParams) *gorm.DB {
 	}
 
 	// Gender Filter
-	if p.Gender != "" {
-		query = query.Where("customer_gender = ?", p.Gender)
+	if len(p.Gender) > 0 {
+		query = query.Where("customer_gender IN ?", p.Gender)
 	}
 
 	// Category filter
@@ -185,7 +185,7 @@ func (s *SQLiteDB) GetTransactions(p model.FilterParams) (*model.PaginatedRespon
 			query = query.Order("date " + sortOrder)
 		case "quantity":
 			query = query.Order("sales_quantity " + sortOrder)
-		case "customer_name":
+		case "customer_name", "customerName":
 			query = query.Order("customer_name " + sortOrder)
 		default:
 			query = query.Order("date DESC")

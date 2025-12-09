@@ -3,7 +3,7 @@ package model
 type FilterParams struct {
 	Search        string   `form:"search"`
 	Region        []string `form:"region"`
-	Gender        string   `form:"gender"`
+	Gender        []string `form:"gender"`
 	MinAge        int      `form:"min_age"`
 	MaxAge        int      `form:"max_age"`
 	Category      []string `form:"category"`
@@ -18,10 +18,10 @@ type FilterParams struct {
 }
 
 type SummaryStats struct {
-	TotalUnitsSold    int     `json:"total_units_sold"`
-	TotalAmount       float64 `json:"total_amount"`
-	TotalDiscount     float64 `json:"total_discount"`
-	TotalTransactions int     `json:"total_transactions"`
+	TotalUnitsSold    int     `json:"totalUnitsSold"`
+	TotalAmount       float64 `json:"totalAmount"`
+	TotalDiscount     float64 `json:"totalDiscount"`
+	TotalTransactions int     `json:"totalTransactions"`
 }
 
 type FilterOptions struct {

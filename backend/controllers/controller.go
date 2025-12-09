@@ -77,7 +77,7 @@ func (sc *SalesController) GetTransactions(c *gin.Context) {
 
 	// multi-select filters
 	params.Region = c.QueryArray("region")
-	params.Gender = c.Query("gender")
+	params.Gender = c.QueryArray("gender")
 	params.Category = c.QueryArray("category")
 	params.Tag = c.QueryArray("tag")
 	params.PaymentMethod = c.QueryArray("payment_method")
@@ -112,32 +112,32 @@ func (sc *SalesController) GetTransactions(c *gin.Context) {
 
 	for i, t := range response.Data {
 		transaction[i] = gin.H{
-			"transaction_id":      t.TransactionID,
-			"date":                t.Date,
-			"customer_id":         t.Customer.ID,
-			"customer_name":       t.Customer.Name,
-			"phone":               t.Customer.Phone,
-			"gender":              t.Customer.Gender,
-			"age":                 t.Customer.Age,
-			"region":              t.Customer.Region,
-			"customer_type":       t.Customer.Type,
-			"product_id":          t.Product.ID,
-			"product_name":        t.Product.Name,
-			"brand":               t.Product.Brand,
-			"category":            t.Product.Category,
-			"tags":                parseTags(t.Product.Tags),
-			"quantity":            t.Sales.Quantity,
-			"price_per_unit":      t.Sales.Price,
-			"discount_percentage": t.Sales.Discount,
-			"total_amount":        t.Sales.Total,
-			"final_amount":        t.Sales.Final,
-			"payment_method":      t.Logistics.PaymentMethod,
-			"ordered_status":      t.Logistics.OrderStatus,
-			"delivery_type":       t.Logistics.DeliveryType,
-			"store_id":            t.Logistics.StoreID,
-			"store_location":      t.Logistics.StoreLocation,
-			"salesperson_id":      t.Logistics.SalesPersonID,
-			"employee_name":       t.Logistics.EmployeeName,
+			"transactionId":     t.TransactionID,
+			"date":              t.Date,
+			"customerId":        t.Customer.ID,
+			"customerName":      t.Customer.Name,
+			"phoneNumber":       t.Customer.Phone,
+			"gender":            t.Customer.Gender,
+			"age":               t.Customer.Age,
+			"customerRegion":    t.Customer.Region,
+			"customerType":      t.Customer.Type,
+			"productId":         t.Product.ID,
+			"productName":       t.Product.Name,
+			"brand":             t.Product.Brand,
+			"productCategory":   t.Product.Category,
+			"tags":              parseTags(t.Product.Tags),
+			"quantity":          t.Sales.Quantity,
+			"pricePerUnit":      t.Sales.Price,
+			"discountPercentage": t.Sales.Discount,
+			"totalAmount":        t.Sales.Total,
+			"finalAmount":        t.Sales.Final,
+			"paymentMethod":      t.Logistics.PaymentMethod,
+			"orderStatus":        t.Logistics.OrderStatus,
+			"deliveryType":       t.Logistics.DeliveryType,
+			"storeId":            t.Logistics.StoreID,
+			"storeLocation":      t.Logistics.StoreLocation,
+			"salespersonId":      t.Logistics.SalesPersonID,
+			"employeeName":       t.Logistics.EmployeeName,
 		}
 	}
 
@@ -160,7 +160,7 @@ func (sc *SalesController) GetSummaryStats(c *gin.Context) {
 	}
 
 	params.Region = c.QueryArray("region")
-	params.Gender = c.Query("gender")
+	params.Gender = c.QueryArray("gender")
 	params.Category = c.QueryArray("category")
 	params.Tag = c.QueryArray("tag")
 	params.PaymentMethod = c.QueryArray("payment_method")
