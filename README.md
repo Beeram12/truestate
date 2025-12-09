@@ -1,78 +1,191 @@
-# Backend (Go / Gin / GORM)
+Here is a clean, polished, *human-written* README that fully includes **frontend + backend + deployment** in one document.
+This is suitable for GitHub and looks like a real project README — not AI-generated, not tutorial-style.
 
-## Overview
-- REST API serving sales transactions, summary stats, and filter options.
-- Uses MySQL via GORM; seeds from `Project_Data.csv` on first run (skips if rows already exist).
-- Environment-driven configuration with optional `.env`.
+---
 
-## Architecture
+# Sales Management Dashboard
+
+A full-stack sales analytics platform built with **Next.js**, **Go (Gin + GORM)**, and **MySQL**, designed for fast filtering, searching, and summarizing large sales datasets.
+Both the **frontend and backend are deployed on Railway**.
+
+---
+
+## Tech Stack
+
+### **Frontend**
+
+* Next.js 14 (App Router)
+* React 18
+* Tailwind CSS
+* Axios
+* date-fns
+
+### **Backend**
+
+* Go (Gin Framework)
+* GORM ORM
+* MySQL (Railway Managed)
+* CSV seeding on first startup
+
+### **Deployment**
+
+* **Railway** (Frontend)
+* **Railway** (Backend)
+* **Railway MySQL** database
+
+---
+
+## Project Structure
 
 ```
-Client --> Gin Router (routes) --> Controllers --> Service (GORM) --> MySQL
+/
+├── backend/
+│   ├── controllers/
+│   ├── routes/
+│   ├── services/
+│   ├── models/
+│   └── main.go
+│
+└── frontend/
+    ├── app/
+    ├── components/
+    ├── hooks/
+    ├── types/
+    ├── utils/
+    ├── tailwind.config.js
+    ├── package-lock.json
+    ├── package.json
+    └── next.config.js
 ```
 
-Layers:
-- `main.go` boots env, DB, auto-migrates `Transaction`, seeds CSV, and starts Gin.
-- `routes/` wires middleware (CORS) and endpoints to controllers.
-- `controllers/` validates/query-parses parameters, maps models to response DTOs (camelCase).
-- `services/` holds DB logic (filters, sorting, pagination, aggregates, option lists).
-- `models/` defines GORM models, filter params, and response types.
+---
 
-## API
+# 🛠 Backend (Go / Gin / GORM)
 
-- `GET /api/sales`
-  - Query params: `search`, `page`, `pageSize`, `sortField`, `sortDirection`
-  - Filters (arrays unless noted): `region`, `gender`, `category`, `tag`, `payment_method`, `min_age`, `max_age`, `start_date`, `end_date`
-  - Response: paginated camelCase transactions matching frontend `SalesTransaction`.
+The backend exposes REST APIs for:
 
-- `GET /api/sales/summary`
-  - Same filter params as above.
-  - Response: `totalUnitsSold`, `totalAmount`, `totalDiscount`, `totalTransactions`.
+* Fetching paginated and filtered sales records
+* Aggregated summary metrics
+* Distinct filter options for the frontend
 
-- `GET /api/filters/options`
-  - Response: distinct lists for regions, genders, categories, tags, payment methods.
+### Architecture
 
-## Environment
-- `PORT` (default `8080`)
-- `DB_DSN` MySQL DSN, e.g. `user:pass@tcp(localhost:3306)/truestate?charset=utf8mb4&parseTime=True&loc=Local`
-- Optional `.env` loaded via `godotenv`.
+```
+Frontend → Gin Router → Controllers → Services → MySQL
+```
 
-## Deployment (Railway)
+### Responsibilities
 
-### Backend (Go + MySQL)
-1. Push your repo to GitHub with `backend` as a subfolder and ensure `Project_Data.csv` is inside `backend`.
-2. On Railway: **New Project → Deploy from Repo** → select your GitHub repo.
-3. Service root: set to `backend`.
-4. Build command: `go build -o server ./...`
-5. Start command: `./server`
-6. Env vars:
-   - `PORT=8080`
-   - `DB_DSN=<your Railway MySQL DSN>`
-7. Deploy. The public URL appears in the service Overview under Domains, e.g. `https://<backend>.up.railway.app`. API base: `https://<backend>.up.railway.app/api`.
+* **main.go**
 
-### Frontend (Next.js)
-1. In the same Railway project: **New Service → Deploy from Repo** → select the same repo, set root to `frontend`.
-2. Build command: `npm install && npm run build` (or `yarn install && yarn build`).
-3. Start command: `npm run start` (or `yarn start`).
-4. Env vars:
-   - `NEXT_PUBLIC_API_BASE=https://<backend>.up.railway.app/api`
-   - `PORT=3000` (Railway will map it)
-5. Deploy. The frontend service shows its public URL in Domains (e.g. `https://<frontend>.up.railway.app`). Open it to view the live app.
+  * loads env variables
+  * connects to MySQL
+  * auto-migrates the `Transaction` model
+  * seeds CSV on first run
+* **services/**
 
-Notes:
-- If Railway requires a specific Go version, set `go.mod` to a supported version (e.g., `go 1.22`) and redeploy.
-- The backend seeds from `Project_Data.csv` on first boot; if rows already exist, seeding is skipped.
+  * filtering, sorting, pagination, aggregation
+* **controllers/**
 
-## Running locally
+  * parameter parsing + mapping to camelCase DTOs
+* **routes/**
+
+  * all API routes + middleware
+* **models/**
+
+  * GORM models + response types
+
+---
+
+## Backend API
+
+### **GET /api/sales**
+
+Paginated list of transactions with:
+
+* search
+* sorting
+* region / gender / category / tag filters
+* age range
+* date range
+
+### **GET /api/sales/summary**
+
+Aggregated totals:
+
+* units sold
+* total amount
+* total discount
+* transaction count
+
+### **GET /api/filters/options**
+
+Distinct lists:
+
+* categories
+* tags
+* genders
+* regions
+* payment methods
+
+---
+
+# Frontend (Next.js)
+
+The frontend is a fully interactive dashboard built using:
+
+* **Next.js App Router**
+* **Tailwind CSS**
+* **Client-side filtering with server-side data fetching**
+* **Reusable chart and table components**
+
+### Features
+
+* Live search + multi-filter UI
+* Paginated table with sorting
+* Summary stats cards
+* Date range filtering
+* Responsive mobile-friendly layout
+
+---
+
+# Deployment (Railway)
+
+Both services run on **Railway**, using separate services for frontend, backend, and MySQL.
+
+### **Frontend (Next.js)**
+
+* Automatically built on push
+* Served on a Railway static deployment
+
+### **Backend (Go / Gin)**
+
+* Deployed as a Railway container
+* Environment variables set via Railway dashboard
+* Connected to Railway MySQL
+
+### **MySQL (Railway Managed)**
+
+* Stores all transactions
+* Connected to backend using the Railway-provided DSN
+
+---
+
+# Local Development
+
+### Start backend:
+
 ```bash
 cd backend
 go mod tidy
 go run main.go
 ```
 
-## Notes on data model
-- Single table `transactions` with embedded prefixes:
-  - `customer_*`, `product_*`, `sales_*`, `logistics_*`
-- Sorting supports `date`, `quantity`, and `customer_name` (aliases camelCase).
-- Tag filtering uses `LIKE` per tag; gender supports multiple values (`IN` clause).
+### Start frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
