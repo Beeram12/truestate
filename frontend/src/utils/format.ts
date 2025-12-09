@@ -15,6 +15,5 @@ export const formatDate = (dateString: string): string => {
 };
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  // Basic phone number formatting - can be enhanced based on requirements
   return phoneNumber;
 };
